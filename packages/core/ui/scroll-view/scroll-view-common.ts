@@ -15,6 +15,7 @@ export abstract class ScrollViewBase extends ContentView implements ScrollViewDe
 	public orientation: CoreTypes.OrientationType;
 	public scrollBarIndicatorVisible: boolean;
 	public isScrollEnabled: boolean;
+	public isAttached: boolean;
 
 	public addEventListener(arg: string, callback: (data: EventData) => void, thisArg?: any): void {
 		super.addEventListener(arg, callback, thisArg);
@@ -47,14 +48,16 @@ export abstract class ScrollViewBase extends ContentView implements ScrollViewDe
 	}
 
 	private attach() {
-		if (this._scrollChangeCount > 0 && this.isLoaded) {
+		if (this._scrollChangeCount > 0 && this.isLoaded && !this.isAttached) {
 			this.attachNative();
+			this.isAttached = true;
 		}
 	}
 
 	private dettach() {
-		if (this._scrollChangeCount === 0 && this.isLoaded) {
+		if (this._scrollChangeCount === 0 && this.isLoaded && this.isAttached) {
 			this.dettachNative();
+			this.isAttached = false;
 		}
 	}
 
