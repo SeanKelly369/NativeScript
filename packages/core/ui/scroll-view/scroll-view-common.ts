@@ -10,6 +10,8 @@ import { CoreTypes } from '../../core-types';
 @CSSType('ScrollView')
 export abstract class ScrollViewBase extends ContentView implements ScrollViewDefinition {
 	private _scrollChangeCount = 0;
+	private isAttached = false; // Add the isAttached flag
+
 	public static scrollEvent = 'scroll';
 
 	public orientation: CoreTypes.OrientationType;
@@ -47,16 +49,18 @@ export abstract class ScrollViewBase extends ContentView implements ScrollViewDe
 	}
 
 	private attach() {
-		if (this._scrollChangeCount > 0 && this.isLoaded) {
+		if (this._scrollChangeCount > 0 && this.isLoaded && !this.isAttached) {
 			this.attachNative();
+			this.isAttached = true;
 		}
 	}
 
 	private dettach() {
-		if (this._scrollChangeCount === 0 && this.isLoaded) {
+		if (this._scrollChangeCount === 0 && this.isLoaded && this.isAttached) {
 			this.dettachNative();
+			this.isAttached = false;
 		}
-	}
+	}	
 
 	protected attachNative() {
 		//
